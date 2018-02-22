@@ -1,18 +1,23 @@
 addpath('usctsim\')
 
 % paramters 
-result_path = '\\azlab-fs01\“ŒŒ¤‹†º\ŒÂlwork\•xˆä\2018-01-13_1\';
+result_path = '\\azlab-fs01\“ŒŒ¤‹†º\ŒÂlwork\•xˆä\nb_usctsim\sim_005\';
 
-num_of_cirle = 20; % ‰~‚ÌŒÂ”
-num_of_trial = 1;  % s‰ñ”
+num_of_cirle = 10; % ‰~‚ÌŒÂ”
+num_of_trial = 10; % s‰ñ”
 
 % initialization
 load('usctsim\param_sample.mat');
 Nx = param.grid.Nx;
 Ny = param.grid.Ny;
-Cx = Nx/2;         % 
-Cy = Ny/2;         %
-R_max = Nx/8;      %
+Cx = Nx/2;     % 
+Cy = Ny/2;     %
+R_min = Nx/16; %
+R_max = Nx/8;  %
+
+if ~exist(result_path, 'dir')
+    mkdir(result_path);
+end
 
 for n = 1:num_of_trial
     
@@ -20,7 +25,9 @@ for n = 1:num_of_trial
     disp(out_dir);
 
     load("usctsim\medium_sample.mat");
-    sum_amount = mean(mean(medium.density));
+    density_sum = mean(mean(medium.density));
+    medium.sound_speed(:,:) = mean(mean(medium.sound_speed)); % ‰¹‘¬ˆê—l
+    medium.density(:,:)     = mean(mean(medium.density));
     
     arr_params = rand(3, num_of_cirle);
     for v = arr_params
@@ -30,7 +37,10 @@ for n = 1:num_of_trial
         r  = v(3,1); 
         medium.density= func_putCircle( ...
             medium.density, ...
-            Cx+(x*Nx - Cx)/(Cx/R_max), Cy+(y*Ny - Cy)/(Cy/R_max), r*R_max, sum_amount);
+            Cx+(x*Nx - Cx)/(Cx/R_max), ...
+            Cy+(y*Ny - Cy)/(Cy/R_max), ...
+            r*(R_max-R_min)+R_min, ...
+            density_sum);
     end
 
     imagesc(medium.density);colorbar();
