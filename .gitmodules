@@ -1,3 +1,4 @@
 [submodule "usctsim"]
 	path = usctsim
-	url = git@github.com:chenaoki/usctsim.git
+	url = https://github.com/chenaoki/usctsim.git
+	branch = master
